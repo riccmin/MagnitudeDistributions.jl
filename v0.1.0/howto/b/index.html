@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>b-value · MagnitudeDistributions.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.svg" alt="MagnitudeDistributions.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">MagnitudeDistributions.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><a class="tocitem" href="../../completeness/">Magnitude of completeness</a></li><li><a class="tocitem" href="../../distributions/">Frequency-magnitude distributions</a></li><li><span class="tocitem">How-to</span><ul><li><a class="tocitem" href="../mc/">Magnitude of completeness</a></li><li class="is-active"><a class="tocitem" href>b-value</a><ul class="internal"><li><a class="tocitem" href="#Input-magnitudes"><span>Input magnitudes</span></a></li><li><a class="tocitem" href="#Estimation"><span>Estimation</span></a></li><li><a class="tocitem" href="#Uncertainty"><span>Uncertainty</span></a></li></ul></li></ul></li><li><a class="tocitem" href="../../utils/">Utils</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">How-to</a></li><li class="is-active"><a href>b-value</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>b-value</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/riccmin/MagnitudeDistributions.jl/blob/master/doc/src/howto/b.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="How-to:-b-value"><a class="docs-heading-anchor" href="#How-to:-b-value">How-to: b-value</a><a id="How-to:-b-value-1"></a><a class="docs-heading-anchor-permalink" href="#How-to:-b-value" title="Permalink"></a></h1><h2 id="Input-magnitudes"><a class="docs-heading-anchor" href="#Input-magnitudes">Input magnitudes</a><a id="Input-magnitudes-1"></a><a class="docs-heading-anchor-permalink" href="#Input-magnitudes" title="Permalink"></a></h2><p>The input magnitudes are obtained by randomly sampling an exponential distribution (see  <a href="../../distributions/#MagnitudeDistributions.GRclassic"><code>GRclassic(b, M0)</code></a>). </p><pre><code class="language-julia-repl">julia&gt; using MagnitudeDistributions, Random
+
+julia&gt; Random.seed!(10) # to make results reproducible
+
+julia&gt; b = 1.0    # b-value
+1.0
+
+julia&gt; M0 = 0.5   # minimum magnitude
+0.5
+
+julia&gt; N = 100000 # number of samples
+100000
+
+julia&gt; mags = rand(GRclassic(b,M0), N)
+100000-element Vector{Float64}:
+ 0.6547030177365674
+ 0.8281037053138567
+ 0.7333794310588824
+ 0.5297096511820081
+ 0.6157440864903895
+ 0.6853284272158914
+ 0.6770055323153921
+ 1.4078926858640064
+ 0.8328259467173961
+ 0.5970215201942995
+ ⋮
+ 0.5477099988280166
+ 0.6028098601689204
+ 0.6851950631472131
+ 2.827905395338248
+ 0.9037936556932051
+ 0.6591458976137341
+ 0.7174070167764743
+ 0.537132931002749
+ 0.6651972372624756</code></pre><h2 id="Estimation"><a class="docs-heading-anchor" href="#Estimation">Estimation</a><a id="Estimation-1"></a><a class="docs-heading-anchor-permalink" href="#Estimation" title="Permalink"></a></h2><p>The b-value can be computed with the method of Aki-Utsu (see <a href="../../distributions/#Distributions.fit_mle-Tuple{Type{#s1} where #s1&lt;:GRclassic,AbstractArray{#s2,N} where N where #s2&lt;:AbstractFloat,Real}"><code>fit_mle(D::Type{&lt;:GRclassic}, mags, M0)</code></a>): </p><pre><code class="language-julia-repl">julia&gt; GRfit = fit_mle(GRclassic, mags, M0)
+GRclassic{Float64, Float64}(b=1.0017187780348895, M0=0.5)</code></pre><div class="admonition is-info"><header class="admonition-header">Note</header><div class="admonition-body"><p>When dealing with binned magnitudes, the method of Tinti and Mulargia should be used instead  (see <a href="../../distributions/#MagnitudeDistributions.fit_binned-Tuple{Type{#s2} where #s2&lt;:GRclassic,AbstractArray{#s1,N} where N where #s1&lt;:AbstractFloat,Real,Real}"><code>fit_binned(D::Type{&lt;:GRclassic}, mags, M0, ΔM)</code></a>).</p></div></div><h2 id="Uncertainty"><a class="docs-heading-anchor" href="#Uncertainty">Uncertainty</a><a id="Uncertainty-1"></a><a class="docs-heading-anchor-permalink" href="#Uncertainty" title="Permalink"></a></h2><p>The stadard error affecting the b-value can be estimated with <a href="https://en.wikipedia.org/wiki/Bootstrapping_(statistics)">bootstrap</a>. This can be  achieved with <a href="https://github.com/juliangehring/Bootstrap.jl">Bootstrap.jl</a>. </p><pre><code class="language-julia-repl">julia&gt; using Bootstrap
+
+julia&gt; Nboot = 1000  # number of bootstrap samples
+1000
+
+julia&gt;  res = bootstrap(x-&gt; fit_mle(GRclassic,x,M0).b, mags, BasicSampling(1000))
+Bootstrap Sampling
+  Estimates:
+     Var │ Estimate  Bias        StdError
+         │ Float64   Float64     Float64
+    ─────┼──────────────────────────────────
+       1 │  1.00172  6.47247e-5  0.00318899
+  Sampling: BasicSampling
+  Samples:  1000
+  Data:     Vector{Float64}: { 100000 }
+
+julia&gt; stderror(res)
+1-element Vector{Float64}:
+ 0.0031889945788686844
+</code></pre><p>Alternatively, the uncertainty can also be determined directly with the method of Shi and Bolt (see <a href="../../distributions/#MagnitudeDistributions.fit_stderr"><code>fit_stderr(D::Type{&lt;:GRclassic}, mags)</code></a>):</p><pre><code class="language-julia-repl">julia&gt; fit_stderr(GRfit, mags)
+0.003165105319481647</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../mc/">« Magnitude of completeness</a><a class="docs-footer-nextpage" href="../../utils/">Utils »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 10 May 2021 23:08">Monday 10 May 2021</span>. Using Julia version 1.2.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

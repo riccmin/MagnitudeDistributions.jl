@@ -1,6 +1,6 @@
 # MagnitudeDistributions.jl
 
-[![codecov](https://codecov.io/gh/riccmin/MagnitudeDistributions.jl/branch/main/graph/badge.svg?token=9USJ3GTXT5)](https://codecov.io/gh/riccin/MagnitudeDistributions.jl)
+[![codecov](https://codecov.io/gh/riccmin/MagnitudeDistributions.jl/branch/main/graph/badge.svg?token=IoxScLtUBp)](https://codecov.io/gh/riccmin/MagnitudeDistributions.jl)
 
 MagnitudeDistributions is a package developed to facilitate the analysis of frequency-magnitude 
 distributions of earthquakes. It provides methods to:
